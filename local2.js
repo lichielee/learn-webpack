@@ -1,0 +1,1 @@
+console.log("local2 file")
