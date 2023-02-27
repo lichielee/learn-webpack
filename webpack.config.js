@@ -1,4 +1,6 @@
 const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 //分块分析的插件
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
@@ -9,6 +11,41 @@ const config = {
     // development模式下，webpack会使用各种插件来帮助开发。比如会将打好的包（chunk）取一个友好的名字，方便debug
     // production模式下，webpack会使用各种插件来提高运行效率。会将打好的包（chunk）取一个简洁的名字，将代码压缩等
     mode: 'development',
+    // resolve主要用于帮助webpack找到需要打包的源代码
+    // import语句中指定的可能是JS文件，也可能是包含JS文件的文件夹，webpack需要同时处理这两种情况
+    resolve: {
+        //在JS代码中，import文件需要指定文件路径，我们可以使用alias来给文件路径取别名
+        alias: {
+            // 在/maxAsync/entry/entry2.js文件中，
+            // 使用import aliasTest from '~/aliasTest'来引入aliasTest.js问文件
+            // '~/aliasTest'的实际路径是'maxAsync/modules/aliasTest.js'
+            "~": path.resolve(__dirname, 'maxAsync/modules'),
+        },
+        // modules第三方依赖（如：import 'moment'）所在的目录
+        modules: ["node_modules"],
+        // descriptionFiles描述第三方依赖的路径的文件
+        descriptionFiles: ['package.json'],
+        // aliasFields描述了第三方依赖的入口文件
+        aliasFields: ['browser']
+    },
+    module: {
+        rules: [
+            {
+                test: require.resolve('./maxAsync/entry/entry3.js'), //只对entry3.js使用imports-loader
+                use: [
+                    {
+                        loader: "imports-loader",
+                        options: {
+                            // 使用import语句导入第三方模块，类似于import _ from 'lodash'
+                            imports: ['default lodash _'],
+                            // 导入自定义变量
+                            additionalCode: "var myVariable = {data:'test 123456'};"
+                        },
+                    }
+                ]
+            }
+        ],
+    },
     // entry定义同步块，异步块是在代码中，以import函数形式引入的块，如：import("XXXX.js")
     entry: {
         // hello: './hello.js',
@@ -24,7 +61,18 @@ const config = {
         // chunkFilename: '[name].chunk.js',// 异步块，导出之后的名字
         clean: true,
     },
-    plugins: [new BundleAnalyzerPlugin()],
+    plugins: [
+        // BundleAnalyzerPlugin在打包完成后后，弹出一个页面，显示打包的细节
+        new BundleAnalyzerPlugin(),
+        // ProvidePlugin用于在所有文件中，自动导入一个模块，并将这个模块作为全局变量使用
+        // 例如，jQuery的'$'变量
+        // 细粒度的引入（即只对特定文件导入模块），参见上面module.rules中的imports-loader
+        new webpack.ProvidePlugin({
+            '$': 'jquery' // 在所有模块文件中，如遇到'$'，就引入jquery
+        }),
+        // HtmlWebpackPlugin用于将打包好的文件插入HTML模板文件中
+        new HtmlWebpackPlugin({title: 'webpack测试页面'})
+    ],
     // optimization优化的对象是块，优化的方式是将符合要求的文件，放入新的块中
     optimization: {
         // 如果入口文件没有变化，但是其引用的模块文件发生了变化，那么入口文件打包后的contenthash会发生变化
@@ -68,7 +116,7 @@ const config = {
         'moment':{
             commonjs: "moment", // 如果我们的库运行在Node.js环境中，import _ from 'moment'等价于const _ = require('moment')
             amd: "moment", // 如果我们的库使用require.js等加载,等价于 define(["moment"], factory);
-            root: "$" // 如果我们的库在浏览器中使用，需要提供一个全局的变量'￥'，等价于 var _ = (window._) or (_);
+            root: "@" // 如果我们的库在浏览器中使用，需要提供一个全局的变量'@'，等价于 var _ = (window._) or (_);
         }
     },
     context: __dirname,
