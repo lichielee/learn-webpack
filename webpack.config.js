@@ -51,9 +51,9 @@ const config = {
         // hello: './hello.js',
         // bello: './bello.js',
         entry1: './maxAsync/entry/entry1.js',
-        entry2: './maxAsync/entry/entry2.js',
-        entry3: './maxAsync/entry/entry3.js',
-        entry4: './maxAsync/entry/entry4.js'
+        // entry2: './maxAsync/entry/entry2.js',
+        // entry3: './maxAsync/entry/entry3.js',
+        // entry4: './maxAsync/entry/entry4.js'
     },
     output: {
         path: path.join(__dirname, 'dist'),
@@ -82,7 +82,7 @@ const config = {
         // Instruct webpack not to obfuscate the resulting code
         minimize: false,
         splitChunks: {
-            minSize: 0, //单个块文件最小是多少字节
+            minSize: 0, //单个块文件最小是多少个byte，只针对webpack打包生成的文件有效，对入口文件和动态引入的文件无效
             // minChunks: 2, //文件最小需要被多少个块引用，才会被加入到新块中
             // chunks 属性指定从哪些天然块（入口块和异步块）中，提取符合要求的文件，放入新建块中
             chunks: "all", //从所有块中查找，包括入口块和异步块
@@ -93,15 +93,14 @@ const config = {
             // 只有满足要求的文件，才能被放入新的块中
             // cacheGroups就是定义要求的地方
             cacheGroups: {
-                default: {//本地文件
+                default: {//针对本地文件
                     idHint: "",
-                    reuseExistingChunk: true,// 本地文件中，如果引用了入口文件中已经引用过的文件，则直接重用
-                    minChunks: 2,
+                    reuseExistingChunk: true,// 如果引用了入口文件中已经引用过的文件，则直接重用
+                    minChunks: 3,
                     priority: -20// 如果一个文件即满足本地文件的要求，也满足第三方文件的要求，则按priority选择优先级高的那个
                 },
-                defaultVendors: {//第三方文件
+                defaultVendors: {//针对第三方文件
                     idHint: "vendors",
-                    reuseExistingChunk: true,
                     test: /[\\/]node_modules[\\/]/,// 第三方文件所在的位置
                     priority: -10
                 }
