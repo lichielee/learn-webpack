@@ -88,7 +88,7 @@ const config = {
             chunks: "all", //从所有块中查找，包括入口块和异步块
             // chunks: "async", //从异步块中查找
             // chunks: "initial",//从同步块中查找
-            maxAsyncRequests: 2, ////总共最多需要加载多少个文件，可以完成异步模块的加载
+            maxAsyncRequests: 2, //总共最多需要加载多少个文件，可以完成异步模块的加载
             // 块中引入的依赖文件，按来源分为：本地文件，第三方文件
             // 只有满足要求的文件，才能被放入新的块中
             // cacheGroups就是定义要求的地方
