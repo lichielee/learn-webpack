@@ -51,7 +51,7 @@ const config = {
         // hello: './hello.js',
         // bello: './bello.js',
         entry1: './maxAsync/entry/entry1.js',
-        // entry2: './maxAsync/entry/entry2.js',
+        entry2: './maxAsync/entry/entry2.js',
         // entry3: './maxAsync/entry/entry3.js',
         // entry4: './maxAsync/entry/entry4.js'
     },
@@ -88,15 +88,15 @@ const config = {
             chunks: "all", //从所有块中查找，包括入口块和异步块
             // chunks: "async", //从异步块中查找
             // chunks: "initial",//从同步块中查找
-            maxAsyncRequests: 2, //总共最多需要加载多少个文件，可以完成异步模块的加载
+            maxAsyncRequests: 3, //总共最多需要加载多少个文件，可以完成异步模块的加载
             // 块中引入的依赖文件，按来源分为：本地文件，第三方文件
             // 只有满足要求的文件，才能被放入新的块中
             // cacheGroups就是定义要求的地方
             cacheGroups: {
                 default: {//针对本地文件
                     idHint: "",
-                    reuseExistingChunk: true,// 如果引用了入口文件中已经引用过的文件，则直接重用
-                    minChunks: 3,
+                    reuseExistingChunk: true,// 如果当前缓存组中需要抽离的文件，在其他缓存组中，已经被抽离出来了，那么当前缓存组直接重用
+                    minChunks: 2,
                     priority: -20// 如果一个文件即满足本地文件的要求，也满足第三方文件的要求，则按priority选择优先级高的那个
                 },
                 defaultVendors: {//针对第三方文件

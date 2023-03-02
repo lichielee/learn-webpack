@@ -3,8 +3,7 @@
 // import multiply from '../modules/multiply'
 // import 'moment'
 
-// import aliasTest from '~/aliasTest';
-import '../modules/entry2Child.js'
+import aliasTest from '~/aliasTest';
 
 // console.log('index', add(1, 2) + subtract(4, 2) + multiply(1, 2))
 
