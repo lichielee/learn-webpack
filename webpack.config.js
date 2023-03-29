@@ -28,6 +28,7 @@ const config = {
         // aliasFields描述了第三方依赖的入口文件
         aliasFields: ['browser']
     },
+    //给每个JS文件添加处理的规则
     module: {
         rules: [
             {
@@ -57,9 +58,13 @@ const config = {
     },
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: '[name].[contenthash].js', //入口块和同步块，导出之后的名字
+        filename: '[name].[contenthash].js', // 入口块和同步块，导出之后的名字
         // chunkFilename: '[name].chunk.js',// 异步块，导出之后的名字
         clean: true,
+        // 在模块中，引入打包文件的路径。
+        // 比如，打包好的a.js文件放在web server工作目录的dist文件夹下。
+        // 那么在HTML中引用对应的a.js文件，就需要指向dist文件夹，完整的路径是"/dist/a.js"。
+        publicPath: "/dist/",
     },
     plugins: [
         // BundleAnalyzerPlugin在打包完成后后，弹出一个页面，显示打包的细节
@@ -114,8 +119,8 @@ const config = {
     externals: {
         'moment':{
             commonjs: "moment", // 如果我们的库运行在Node.js环境中，import _ from 'moment'等价于const _ = require('moment')
-            amd: "moment", // 如果我们的库使用require.js等加载,等价于 define(["moment"], factory);
-            root: "@" // 如果我们的库在浏览器中使用，需要提供一个全局的变量'@'，等价于 var _ = (window._) or (_);
+            amd: "moment", // 如果我们的库使用require.js加载,等价于 define(["moment"], factory);
+            root: "@" // 如果我们的库在浏览器中使用，需要提供一个全局的变量'@'，等价于 var @ = (window.@) or (@);
         }
     },
     context: __dirname,
